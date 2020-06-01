@@ -1,4 +1,3 @@
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 
 import DB from "./DB.ts";
@@ -11,12 +10,6 @@ const router = new Router();
 export interface RequestError extends Error {
   status: number;
 }
-
-let idUser = v4.generate();
-let idPost = v4.generate();
-
-DB.users.set(idUser, { id: idUser, name: "Toto", photo: "Test de photo" });
-DB.posts.set(idPost, { id: idPost, content: "Lorem Ipsum", title: "Super Post", userId: idUser });
 
 app.use(async (ctx, next) => {
   try {
