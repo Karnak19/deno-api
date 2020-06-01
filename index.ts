@@ -1,10 +1,12 @@
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
-import { Application } from "https://deno.land/x/oak/mod.ts";
+import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+
 import DB from "./DB.ts";
-import users from "./users.route.ts";
-import posts from "./posts.route.ts";
+import { PostPost, getAllPosts, GetOnePost, DeletePost } from "./posts.route.ts";
+import { GetAllUsers, GetOneUser, GetOneUserPosts, PostUser, DeleteUser } from "./users.route.ts";
 
 const app = new Application();
+const router = new Router();
 
 export interface RequestError extends Error {
   status: number;
@@ -28,8 +30,16 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(users.routes());
-app.use(posts.routes());
+router
+  .get("/users", GetAllUsers)
+  .get("/users/:id", GetOneUser)
+  .get("/users/:id/posts", GetOneUserPosts)
+  .post("/users", PostUser)
+  .delete("/users/:id", DeleteUser);
+
+router.get("/posts", getAllPosts).get("/posts/:id", GetOnePost).post("/posts", PostPost).delete("/posts/:id", DeletePost);
+
+app.use(router.routes());
 
 app.use((ctx) => {
   ctx.response.body = "hello World ! 🦕";

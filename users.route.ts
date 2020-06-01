@@ -3,13 +3,11 @@ import { Router } from "https://deno.land/x/oak/mod.ts";
 import DB from "./DB.ts";
 import { RequestError } from "./index.ts";
 
-const router = new Router();
-
-router.get("/users/", (ctx) => {
+export const GetAllUsers = (ctx: any) => {
   ctx.response.body = [...DB.users.values()];
-});
+};
 
-router.get("/users/:id", (ctx) => {
+export const GetOneUser = (ctx: any) => {
   const { id } = ctx.params;
   if (id && DB.users.has(id)) {
     ctx.response.body = { ...DB.users.get(id) };
@@ -18,9 +16,9 @@ router.get("/users/:id", (ctx) => {
     error.status = 404;
     throw error;
   }
-});
+};
 
-router.get("/users/:id/posts", (ctx) => {
+export const GetOneUserPosts = (ctx: any) => {
   const { id } = ctx.params;
   if (id && DB.users.has(id)) {
     ctx.response.body = [...DB.posts.values()].filter(({ userId }) => id === userId);
@@ -29,18 +27,18 @@ router.get("/users/:id/posts", (ctx) => {
     error.status = 404;
     throw error;
   }
-});
+};
 
-router.post("/users", async (ctx) => {
+export const PostUser = async (ctx: any) => {
   const body = await ctx.request.body();
   const { name, photo } = body.value;
   const user = { id: v4.generate(), name, photo };
 
   DB.users.set(user.id, user);
   ctx.response.body = user;
-});
+};
 
-router.delete("/users/:id", async (ctx) => {
+export const DeleteUser = async (ctx: any) => {
   const { id } = ctx.params;
   if (id && DB.users.has(id)) {
     DB.users.delete(id);
@@ -51,6 +49,4 @@ router.delete("/users/:id", async (ctx) => {
     error.status = 404;
     throw error;
   }
-});
-
-export default router;
+};

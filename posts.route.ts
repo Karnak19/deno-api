@@ -1,15 +1,13 @@
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
-import { Router } from "https://deno.land/x/oak/mod.ts";
+
 import DB from "./DB.ts";
 import { RequestError } from "./index.ts";
 
-const router = new Router();
-
-router.get("/posts", (ctx) => {
+export const getAllPosts = (ctx: any) => {
   ctx.response.body = [...DB.posts.values()];
-});
+};
 
-router.get("/posts/:id", (ctx) => {
+export const GetOnePost = (ctx: any) => {
   const { id } = ctx.params;
   if (id && DB.posts.has(id)) {
     ctx.response.body = { ...DB.posts.get(id) };
@@ -18,18 +16,18 @@ router.get("/posts/:id", (ctx) => {
     error.status = 404;
     throw error;
   }
-});
+};
 
-router.post("/posts", async (ctx) => {
+export const PostPost = async (ctx: any) => {
   const body = await ctx.request.body();
   const { title, content, userId } = body.value;
   const post = { id: v4.generate(), title, content, userId };
 
   DB.posts.set(post.id, post);
   ctx.response.body = post;
-});
+};
 
-router.delete("/posts/:id", async (ctx) => {
+export const DeletePost = async (ctx: any) => {
   const { id } = ctx.params;
   if (id && DB.posts.has(id)) {
     DB.posts.delete(id);
@@ -40,6 +38,4 @@ router.delete("/posts/:id", async (ctx) => {
     error.status = 404;
     throw error;
   }
-});
-
-export default router;
+};
